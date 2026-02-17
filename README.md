@@ -203,6 +203,23 @@ npm run start
 
 ---
 
+## CSS / Styling Notes
+
+This project uses **custom CSS utility classes** (defined in `app/globals.css`) instead of the Tailwind CSS framework. The class names follow Tailwind naming conventions for familiarity. This approach:
+- Works without tailwindcss installed as a build tool
+- Zero-runtime CSS — static utility classes
+- Easy to upgrade to Tailwind v4 later (just add `@import "tailwindcss"` and delete globals.css utility sections)
+
+To switch to Tailwind v4 (for production):
+```bash
+npm install tailwindcss@next @tailwindcss/postcss
+```
+Then update `app/globals.css`:
+```css
+@import "tailwindcss";
+/* custom theme config below */
+```
+
 ## Mock Data
 
 During development, the app falls back to mock data in `lib/mock-data.ts` when the API is unavailable. This includes:
