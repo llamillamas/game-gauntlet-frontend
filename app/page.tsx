@@ -3,10 +3,10 @@ import { GameCard } from '@/components/game/GameCard'
 import { MOCK_GAMES } from '@/lib/mock-data'
 
 const STATS = [
-  { label: 'Total Players', value: '12,400+', icon: '👥' },
-  { label: 'Games Listed', value: '240+', icon: '🎮' },
-  { label: 'Total Volume', value: '$1.2M USDC', icon: '💰' },
-  { label: 'Active Parties', value: '38', icon: '🔥' },
+  { label: 'Players', value: '12,400' },
+  { label: 'Games', value: '240' },
+  { label: 'Volume', value: '$1.2M' },
+  { label: 'Parties', value: '38' },
 ]
 
 export default function HomePage() {
@@ -14,180 +14,185 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* Hero Section */}
+      {/* Hero Section - Asymmetric, Editorial */}
       <section className="relative bg-gg-bg border-b border-gg-border overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
-          <div className="text-center max-w-4xl mx-auto">
-            {/* Headline intro */}
-            <div className="animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-              <p className="text-sm font-medium tracking-widest text-gg-primary mb-4 uppercase">
-                Decentralized Gaming
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-40">
+          <div className="grid md:grid-cols-2 gap-16 items-start">
+            {/* Left: Headline + Subtext */}
+            <div className="animate-slideInLeft">
+              <p className="text-gg-muted text-sm mb-6 tracking-widest">GAME GAUNTLET</p>
+              <h1 className="text-6xl md:text-7xl font-black text-gg-text leading-tight mb-8">
+                Win<br />
+                <span className="text-gg-primary">USDC</span>
+                <br />
+                on chain.
+              </h1>
+              <p className="text-lg text-gg-muted leading-relaxed mb-12 max-w-sm">
+                Upload your game. Own it. Compete for real money. No middleman. No limits.
               </p>
-            </div>
-
-            {/* Main headline */}
-            <h1 className="text-5xl md:text-7xl font-extrabold text-gg-text leading-tight animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-              Compete.
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gg-primary via-gg-accent to-gg-primary">
-                Bet. Win.
-              </span>
-            </h1>
-
-            {/* Subheadline */}
-            <p className="mt-8 text-lg text-gg-muted max-w-2xl mx-auto leading-relaxed animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
-              Upload games as NFTs. Create betting parties. Compete on-chain. Winner takes USDC.
-              <br />
-              <span className="text-gg-text font-medium">Transparent. Auditable. Yours.</span>
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
               <Link
                 href="/games"
-                className="px-8 py-4 bg-gg-primary text-white rounded-lg font-bold text-lg btn-primary transition-smooth hover:shadow-lg"
+                className="inline-block px-8 py-4 bg-gg-primary text-white rounded-lg font-bold btn-primary transition-smooth hover:shadow-lg"
               >
-                Explore Games
-              </Link>
-              <Link
-                href="/create-game"
-                className="px-8 py-4 bg-gg-surface border border-gg-primary text-gg-primary rounded-lg font-bold text-lg transition-smooth hover:bg-gg-primary/10"
-              >
-                Create One
+                Start Competing
               </Link>
             </div>
 
-            {/* Status Badge */}
-            <div className="mt-8 flex items-center justify-center gap-2 text-sm text-gg-muted animate-fadeInUp" style={{ animationDelay: '0.5s' }}>
-              <span className="w-2 h-2 bg-gg-success rounded-full animate-pulse"></span>
-              <span>Live on Solana Devnet</span>
+            {/* Right: Stats Grid (Asymmetric) */}
+            <div className="grid grid-cols-2 gap-6 animate-fadeInScale" style={{ animationDelay: '0.2s' }}>
+              {STATS.map((stat, idx) => (
+                <div key={stat.label} className="border-l-2 border-gg-primary pl-6 py-4">
+                  <div className="text-3xl md:text-4xl font-black text-gg-text font-mono">{stat.value}</div>
+                  <div className="text-xs text-gg-muted uppercase tracking-wider mt-2">{stat.label}</div>
+                </div>
+              ))}
             </div>
+          </div>
+
+          {/* Status line */}
+          <div className="mt-16 pt-8 border-t border-gg-border text-sm text-gg-muted">
+            Live on Solana Devnet
           </div>
         </div>
 
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-gg-primary/5 rounded-full blur-3xl animate-floatUp" />
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gg-secondary/5 rounded-full blur-3xl" style={{ animationDelay: '1s' }} />
-        </div>
+        {/* Animated accent */}
+        <div className="absolute top-1/2 right-0 w-96 h-96 bg-gg-primary/3 rounded-full blur-3xl pointer-events-none -mr-48 animate-floatUp" />
       </section>
 
-      {/* Stats Section */}
-      <section className="bg-gg-surface border-b border-gg-border py-16">
+      {/* Featured Games - Editorial Grid */}
+      <section className="py-24 bg-gg-surface border-b border-gg-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {STATS.map((stat, idx) => (
-              <div
-                key={stat.label}
-                className="bg-gg-card/50 border border-gg-border rounded-lg p-6 text-center card-hover animate-fadeInScale transition-smooth"
-                style={{ animationDelay: `${0.1 + idx * 0.1}s` }}
+          <div className="mb-16">
+            <h2 className="text-5xl font-black text-gg-text mb-4">
+              Top Games
+            </h2>
+            <p className="text-gg-muted text-lg max-w-2xl">
+              The most competitive games this week. Join thousands of players competing for USDC.
+            </p>
+          </div>
+
+          {/* Asymmetric grid: 2 large + 2 small */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* First two games: larger */}
+            {featuredGames.slice(0, 2).map((game, idx) => (
+              <div 
+                key={game.id} 
+                className="md:col-span-1.5 animate-fadeInScale card-hover transition-smooth"
+                style={{ animationDelay: `${idx * 0.1}s` }}
               >
-                <div className="text-4xl mb-3 opacity-80">{stat.icon}</div>
-                <div className="text-3xl font-bold text-gg-text font-mono">{stat.value}</div>
-                <div className="text-gg-muted text-xs mt-2 tracking-wider uppercase font-medium">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Games */}
-      <section className="py-20 bg-gg-bg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <p className="text-gg-primary text-sm font-medium tracking-widest uppercase mb-2">This Week</p>
-              <h2 className="text-4xl font-bold text-gg-text">Featured Games</h2>
-              <p className="text-gg-muted text-base mt-3">Top performers by earnings and participation</p>
-            </div>
-            <Link
-              href="/games"
-              className="text-gg-primary text-sm font-medium link-hover hidden sm:inline-block"
-            >
-              Browse All
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredGames.map((game, idx) => (
-              <div key={game.id} className="animate-fadeInScale" style={{ animationDelay: `${0.1 + idx * 0.05}s` }}>
                 <GameCard game={game} />
               </div>
             ))}
-          </div>
-        </div>
-      </section>
 
-      {/* How It Works */}
-      <section className="py-20 bg-gg-surface border-t border-gg-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <p className="text-gg-primary text-sm font-medium tracking-widest uppercase mb-3">The Flow</p>
-            <h2 className="text-4xl font-bold text-gg-text">
-              How It Works
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: '🎮',
-                title: 'Upload',
-                desc: 'Link your GitHub repo. We mint it as an NFT on Solana.',
-              },
-              {
-                icon: '🎯',
-                title: 'Create a Party',
-                desc: 'Select games, set the bet. Invite friends. Funds locked on-chain.',
-              },
-              {
-                icon: '💰',
-                title: 'Compete & Win',
-                desc: 'Play. Compete. Winner takes the pot. Results on-chain.',
-              },
-            ].map((item, idx) => (
-              <div
-                key={item.title}
-                className="group relative animate-fadeInUp transition-smooth"
-                style={{ animationDelay: `${0.2 + idx * 0.1}s` }}
-              >
-                <div className="bg-gg-card border border-gg-border rounded-lg p-8 text-center h-full card-hover transition-smooth">
-                  <div className="text-5xl mb-6 opacity-70 group-hover:opacity-100 transition-smooth">{item.icon}</div>
-                  <h3 className="text-xl font-bold text-gg-text mb-4">{item.title}</h3>
-                  <p className="text-gg-muted leading-relaxed">{item.desc}</p>
+            {/* Right column: 2 smaller games stacked */}
+            <div className="space-y-6">
+              {featuredGames.slice(2, 4).map((game, idx) => (
+                <div 
+                  key={game.id} 
+                  className="animate-fadeInScale card-hover transition-smooth"
+                  style={{ animationDelay: `${0.2 + idx * 0.1}s` }}
+                >
+                  <GameCard game={game} />
                 </div>
+              ))}
+            </div>
+          </div>
 
-                {/* Connector line (hidden on mobile) */}
-                {idx < 2 && (
-                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-px bg-gradient-to-r from-gg-border to-transparent" />
-                )}
-              </div>
-            ))}
+          <div className="mt-12 text-center">
+            <Link
+              href="/games"
+              className="inline-block px-8 py-3 border border-gg-primary text-gg-primary rounded-lg font-bold transition-smooth hover:bg-gg-primary/10"
+            >
+              Browse All Games
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gg-bg border-t border-gg-border">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-5xl font-bold text-gg-text mb-6 animate-fadeInUp">
-            Ready to play?
+      {/* How It Works - Editorial */}
+      <section className="py-24 bg-gg-bg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-5xl font-black text-gg-text mb-16">
+            The Flow
           </h2>
-          <p className="text-lg text-gg-muted mb-12 max-w-2xl mx-auto leading-relaxed animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-            Connect your Phantom wallet, find an active party, or create your own. Start competing for USDC.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-            <Link
-              href="/parties"
-              className="px-10 py-4 bg-gg-primary text-white rounded-lg font-bold btn-primary transition-smooth text-lg"
-            >
-              Find a Party
-            </Link>
-            <Link
-              href="/leaderboard"
-              className="px-10 py-4 bg-gg-surface border border-gg-border text-gg-text rounded-lg font-bold transition-smooth text-lg hover:border-gg-primary"
-            >
-              View Leaderboard
-            </Link>
+
+          {/* Asymmetric layout: staggered cards */}
+          <div className="space-y-8">
+            {/* Step 1 */}
+            <div className="grid md:grid-cols-2 gap-12 items-center animate-fadeInUp">
+              <div>
+                <h3 className="text-3xl font-black text-gg-text mb-4">Upload Your Game</h3>
+                <p className="text-lg text-gg-muted leading-relaxed">
+                  Connect your GitHub repo. We verify it, mint an NFT, and make it live. You own it forever on Solana.
+                </p>
+              </div>
+              <div className="h-48 bg-gg-border/20 rounded-lg border border-gg-border border-dashed flex items-center justify-center">
+                <p className="text-gg-muted">Game Preview</p>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="grid md:grid-cols-2 gap-12 items-center animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+              <div className="h-48 bg-gg-border/20 rounded-lg border border-gg-border border-dashed flex items-center justify-center order-2 md:order-1">
+                <p className="text-gg-muted">Party Dashboard</p>
+              </div>
+              <div className="order-1 md:order-2">
+                <h3 className="text-3xl font-black text-gg-text mb-4">Create or Join a Party</h3>
+                <p className="text-lg text-gg-muted leading-relaxed">
+                  Select 2-4 games, set the stakes, invite players. Funds go into escrow. Everyone commits, nobody cheats.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="grid md:grid-cols-2 gap-12 items-center animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+              <div>
+                <h3 className="text-3xl font-black text-gg-text mb-4">Compete & Claim</h3>
+                <p className="text-lg text-gg-muted leading-relaxed">
+                  Play. Record your score on-chain. Winner takes USDC. It's that simple. No disputes, no trust required.
+                </p>
+              </div>
+              <div className="h-48 bg-gg-border/20 rounded-lg border border-gg-border border-dashed flex items-center justify-center">
+                <p className="text-gg-muted">Leaderboard</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section - Bold */}
+      <section className="py-32 bg-gg-surface border-t border-gg-border">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div className="animate-slideInLeft">
+              <h2 className="text-6xl font-black text-gg-text mb-8 leading-tight">
+                Join thousands competing for USDC.
+              </h2>
+              <p className="text-lg text-gg-muted mb-8 leading-relaxed">
+                Wallet connected? Pick a game. Bet what you want. Win real money. Every transaction on-chain, every result auditable.
+              </p>
+              <div className="space-y-3">
+                <Link
+                  href="/parties"
+                  className="block px-8 py-4 bg-gg-primary text-white rounded-lg font-bold btn-primary transition-smooth text-center"
+                >
+                  Find an Active Party
+                </Link>
+                <Link
+                  href="/create-game"
+                  className="block px-8 py-4 border border-gg-border text-gg-text rounded-lg font-bold transition-smooth text-center hover:bg-gg-card"
+                >
+                  Create Your Own
+                </Link>
+              </div>
+            </div>
+
+            {/* Right: Leaderboard preview */}
+            <div className="animate-fadeInScale" style={{ animationDelay: '0.2s' }}>
+              <div className="h-96 bg-gg-card border border-gg-border rounded-lg flex items-center justify-center">
+                <p className="text-gg-muted">Leaderboard Preview</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
