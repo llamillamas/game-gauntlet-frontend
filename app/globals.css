@@ -431,12 +431,42 @@ input[type="range"]::-webkit-slider-thumb {
 .hover\:text-gg-primary:hover { color: var(--gg-primary); }
 .hover\:text-gg-text:hover { color: var(--gg-text); }
 .hover\:bg-opacity-80:hover { opacity: 0.85; }
-.hover\:border-gg-primary:hover { border-color: var(--gg-primary); }
+.hover\:border-gg-primary:hover { border-color: var(--gg-primary); transition: border-color 0.2s ease; }
 .hover\:underline:hover { text-decoration: underline; }
 .hover\:no-underline:hover { text-decoration: none; }
 .hover\:bg-gg-surface\/50:hover { background-color: rgba(26, 26, 46, 0.5); }
 .hover\:bg-gg-card:hover { background-color: var(--gg-card); }
 .hover\:scale-105:hover { transform: scale(1.05); }
+
+/* Enhanced interactive hover states */
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(233, 69, 96, 0.15);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(233, 69, 96, 0.3);
+}
+
+.link-hover {
+  position: relative;
+}
+
+.link-hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--gg-primary);
+  transition: width 0.3s ease;
+}
+
+.link-hover:hover::after {
+  width: 100%;
+}
 
 /* ─── Disabled states ────────────────────────────────────────────────────── */
 .disabled\:opacity-50:disabled { opacity: 0.5; }
