@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useMotionPreferences } from '@/hooks/useMotionPreferences';
-import { slideUp, fadeIn } from '@/animations/presets';
+import { slideUpVariants, fadeVariants } from '@/animations/presets';
 
 interface BetSelection {
   id: string;
@@ -43,18 +44,33 @@ export function BetSlip({ selections, onRemove, onUpdateStake, onPlaceBets, onCl
 
   if (selections.length === 0) {
     return (
-      <aside className="card p-6 rounded-xl bg-surface dark:bg-surface-dark" style={shouldAnimate ? fadeIn : undefined}>
+      <motion.aside
+        className="card p-6 rounded-xl bg-surface dark:bg-surface-dark"
+        variants={shouldAnimate ? fadeVariants : undefined}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
         <h2 className="text-lg font-semibold mb-4">Bet Slip</h2>
         <p className="text-muted dark:text-muted-dark text-center py-8">No selections yet</p>
-      </aside>
+      </motion.aside>
     );
   }
 
   return (
-    <aside className="card p-6 rounded-xl bg-surface dark:bg-surface-dark" style={shouldAnimate ? slideUp : undefined}>
+    <motion.aside
+      className="card p-6 rounded-xl bg-surface dark:bg-surface-dark"
+      variants={shouldAnimate ? slideUpVariants : undefined}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Bet Slip ({selections.length})</h2>
-        <button onClick={onClear} className="text-sm text-primary-500 hover:underline focus:ring-2 focus:ring-primary-400 focus:outline-none px-2 py-1 rounded">
+        <button
+          onClick={onClear}
+          className="text-sm text-primary-500 hover:underline focus:ring-2 focus:ring-primary-400 focus:outline-none px-2 py-1 rounded"
+        >
           Clear All
         </button>
       </div>
@@ -101,7 +117,11 @@ export function BetSlip({ selections, onRemove, onUpdateStake, onPlaceBets, onCl
         </div>
       </div>
 
-      {error && <p className="text-error text-sm mt-2" role="alert">{error}</p>}
+      {error && (
+        <p className="text-error text-sm mt-2" role="alert">
+          {error}
+        </p>
+      )}
 
       <button
         onClick={handleSubmit}
@@ -111,6 +131,6 @@ export function BetSlip({ selections, onRemove, onUpdateStake, onPlaceBets, onCl
       >
         {loading ? 'Placing Bets...' : `Place ${selections.length} Bet${selections.length > 1 ? 's' : ''}`}
       </button>
-    </aside>
+    </motion.aside>
   );
 }

@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useMotionPreferences } from '@/hooks/useMotionPreferences';
-import { pulse } from '@/animations/presets';
+import { pulseVariants } from '@/animations/presets';
 
 interface OddsDisplayProps {
   eventId: string;
@@ -21,7 +22,7 @@ export function OddsDisplay({ eventId, initialOdds, wsEndpoint, onOddsChange }: 
     if (!wsEndpoint) return;
 
     const ws = new WebSocket(`${wsEndpoint}/odds/${eventId}`);
-    
+
     ws.onopen = () => setConnected(true);
     ws.onclose = () => setConnected(false);
     ws.onerror = () => setConnected(false);
@@ -44,14 +45,15 @@ export function OddsDisplay({ eventId, initialOdds, wsEndpoint, onOddsChange }: 
   }, [eventId, wsEndpoint, onOddsChange]);
 
   const OddButton = ({ label, value, type }: { label: string; value: number; type: 'home' | 'draw' | 'away' }) => (
-    <button
-      className={`flex-1 p-4 rounded-lg bg-surface-alt dark:bg-surface-alt-dark focus:ring-2 focus:ring-primary-400 focus:outline-none min-h-[48px] transition-transform ${changed === type && shouldAnimate ? 'scale-105' : ''}`}
-      style={changed === type && shouldAnimate ? pulse : undefined}
+    <motion.button
+      className="flex-1 p-4 rounded-lg bg-surface-alt dark:bg-surface-alt-dark focus:ring-2 focus:ring-primary-400 focus:outline-none min-h-[48px] transition-transform"
+      variants={changed === type && shouldAnimate ? pulseVariants : undefined}
+      animate={changed === type && shouldAnimate ? 'pulse' : 'idle'}
       aria-label={`${label}: ${value.toFixed(2)}`}
     >
       <span className="block text-sm text-muted dark:text-muted-dark">{label}</span>
       <span className="block text-xl font-bold">{value.toFixed(2)}</span>
-    </button>
+    </motion.button>
   );
 
   return (

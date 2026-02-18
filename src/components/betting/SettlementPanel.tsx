@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useMotionPreferences } from '@/hooks/useMotionPreferences';
-import { scaleIn, glow, fadeIn } from '@/animations/presets';
+import { scaleInVariants, glowVariants, fadeVariants } from '@/animations/presets';
 
 interface Settlement {
   betId: string;
@@ -48,27 +49,60 @@ export function SettlementPanel({ wsEndpoint, userId, onSettlement }: Settlement
   }
 
   return (
-    <aside className="space-y-4" style={shouldAnimate ? fadeIn : undefined}>
+    <motion.aside
+      className="space-y-4"
+      variants={shouldAnimate ? fadeVariants : undefined}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       {newSettlement && (
-        <article
-          className={`p-6 rounded-xl shadow-lg ${newSettlement.result === 'won' ? 'bg-success-100 dark:bg-success-900' : newSettlement.result === 'lost' ? 'bg-error-100 dark:bg-error-900' : 'bg-muted-100 dark:bg-muted-800'}`}
-          style={shouldAnimate ? { ...scaleIn, ...glow } : undefined}
+        <motion.article
+          className={`p-6 rounded-xl shadow-lg ${
+            newSettlement.result === 'won'
+              ? 'bg-success-100 dark:bg-success-900'
+              : newSettlement.result === 'lost'
+                ? 'bg-error-100 dark:bg-error-900'
+                : 'bg-muted-100 dark:bg-muted-800'
+          }`}
+          variants={shouldAnimate ? scaleInVariants : undefined}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
           role="alert"
           aria-live="polite"
         >
-          <div className="flex items-center justify-between mb-2">
-            <span className={`text-2xl font-bold uppercase ${newSettlement.result === 'won' ? 'text-success-700 dark:text-success-300' : newSettlement.result === 'lost' ? 'text-error-700 dark:text-error-300' : 'text-muted-700'}`}>
-              {newSettlement.result === 'won' ? '🎉 Winner!' : newSettlement.result === 'lost' ? 'Not this time' : 'Bet Voided'}
+          <motion.div
+            className="flex items-center justify-between mb-2"
+            animate={shouldAnimate ? 'glow' : undefined}
+            variants={shouldAnimate ? glowVariants : undefined}
+          >
+            <span
+              className={`text-2xl font-bold uppercase ${
+                newSettlement.result === 'won'
+                  ? 'text-success-700 dark:text-success-300'
+                  : newSettlement.result === 'lost'
+                    ? 'text-error-700 dark:text-error-300'
+                    : 'text-muted-700'
+              }`}
+            >
+              {newSettlement.result === 'won'
+                ? '🎉 Winner!'
+                : newSettlement.result === 'lost'
+                  ? 'Not this time'
+                  : 'Bet Voided'}
             </span>
-          </div>
+          </motion.div>
           <p className="font-medium">{newSettlement.event}</p>
-          <p className="text-sm text-muted dark:text-muted-dark">{newSettlement.selection} @ {newSettlement.odds.toFixed(2)}</p>
+          <p className="text-sm text-muted dark:text-muted-dark">
+            {newSettlement.selection} @ {newSettlement.odds.toFixed(2)}
+          </p>
           {newSettlement.result === 'won' && (
             <p className="text-3xl font-bold text-success-600 dark:text-success-400 mt-2">
               +${newSettlement.payout.toFixed(2)}
             </p>
           )}
-        </article>
+        </motion.article>
       )}
 
       {settlements.length > 0 && (
@@ -76,10 +110,21 @@ export function SettlementPanel({ wsEndpoint, userId, onSettlement }: Settlement
           <h3 className="text-sm font-semibold text-muted dark:text-muted-dark">Recent Settlements</h3>
           <ul className="space-y-2">
             {settlements.slice(0, 5).map((s) => (
-              <li key={s.betId} className="flex justify-between items-center p-3 rounded-lg bg-surface dark:bg-surface-dark text-sm">
+              <li
+                key={s.betId}
+                className="flex justify-between items-center p-3 rounded-lg bg-surface dark:bg-surface-dark text-sm"
+              >
                 <div>
                   <span className="font-medium">{s.selection}</span>
-                  <span className={`ml-2 px-2 py-0.5 rounded text-xs ${s.result === 'won' ? 'bg-success-100 text-success-700' : s.result === 'lost' ? 'bg-error-100 text-error-700' : 'bg-muted-100 text-muted-700'}`}>
+                  <span
+                    className={`ml-2 px-2 py-0.5 rounded text-xs ${
+                      s.result === 'won'
+                        ? 'bg-success-100 text-success-700'
+                        : s.result === 'lost'
+                          ? 'bg-error-100 text-error-700'
+                          : 'bg-muted-100 text-muted-700'
+                    }`}
+                  >
                     {s.result}
                   </span>
                 </div>
@@ -91,6 +136,6 @@ export function SettlementPanel({ wsEndpoint, userId, onSettlement }: Settlement
           </ul>
         </div>
       )}
-    </aside>
+    </motion.aside>
   );
 }

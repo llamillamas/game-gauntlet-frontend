@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useMotionPreferences } from '@/hooks/useMotionPreferences';
-import { scaleIn, glow } from '@/animations/presets';
+import { scaleInVariants, glowVariants } from '@/animations/presets';
 
 interface BetCardProps {
   eventId: string;
@@ -35,14 +36,22 @@ export function BetCard({ eventId, title, odds, minStake = 1, maxStake = 1000, o
   };
 
   return (
-    <article 
+    <motion.article
       className="card p-6 rounded-xl bg-surface dark:bg-surface-dark shadow-md hover:shadow-lg transition-shadow"
-      style={shouldAnimate ? scaleIn : undefined}
+      variants={shouldAnimate ? scaleInVariants : undefined}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
     >
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      <p className="text-3xl font-bold text-primary-500" style={shouldAnimate ? glow : undefined}>
+      <motion.p
+        className="text-3xl font-bold text-primary-500"
+        variants={shouldAnimate ? glowVariants : undefined}
+        initial="idle"
+        animate="glow"
+      >
         {odds.toFixed(2)}
-      </p>
+      </motion.p>
 
       <div className="mt-4 space-y-3">
         <label className="block">
@@ -74,6 +83,6 @@ export function BetCard({ eventId, title, odds, minStake = 1, maxStake = 1000, o
           {loading ? 'Placing...' : 'Place Bet'}
         </button>
       </div>
-    </article>
+    </motion.article>
   );
 }
