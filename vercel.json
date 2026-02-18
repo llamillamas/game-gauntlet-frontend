@@ -1,0 +1,12 @@
+{
+  "projectId": "prj_game_gauntlet",
+  "orgId": "team_llamillamas",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://api.game-gauntlet.com/api",
+    "NEXT_PUBLIC_SOLANA_NETWORK": "devnet",
+    "NEXT_PUBLIC_SOLANA_RPC_URL": "https://devnet.helius-rpc.com/?api-key=856a17f3-b3f2-4fcb-9263-e3a31eabfe98",
+    "NEXT_PUBLIC_PLATFORM_FEE_PERCENT": "5"
+  }
+}
