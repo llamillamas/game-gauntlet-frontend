@@ -2,26 +2,26 @@ import type { Config } from 'tailwindcss'
 
 const config: Config = {
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        'gg-bg': 'var(--gg-bg)',
-        'gg-surface': 'var(--gg-surface)',
-        'gg-card': 'var(--gg-card)',
-        'gg-border': 'var(--gg-border)',
-        'gg-primary': 'var(--gg-primary)',
-        'gg-secondary': 'var(--gg-secondary)',
-        'gg-accent': 'var(--gg-accent)',
-        'gg-success': 'var(--gg-success)',
-        'gg-error': 'var(--gg-error)',
-        'gg-warning': 'var(--gg-warning)',
-        'gg-text': 'var(--gg-text)',
-        'gg-muted': 'var(--gg-muted)',
+        'gg-bg': 'rgb(var(--gg-bg) / <alpha-value>)',
+        'gg-surface': 'rgb(var(--gg-surface) / <alpha-value>)',
+        'gg-card': 'rgb(var(--gg-card) / <alpha-value>)',
+        'gg-border': 'rgb(var(--gg-border) / <alpha-value>)',
+        'gg-primary': 'rgb(var(--gg-primary) / <alpha-value>)',
+        'gg-secondary': 'rgb(var(--gg-secondary) / <alpha-value>)',
+        'gg-accent': 'rgb(var(--gg-accent) / <alpha-value>)',
+        'gg-success': 'rgb(var(--gg-success) / <alpha-value>)',
+        'gg-error': 'rgb(var(--gg-error) / <alpha-value>)',
+        'gg-warning': 'rgb(var(--gg-warning) / <alpha-value>)',
+        'gg-text': 'rgb(var(--gg-text) / <alpha-value>)',
+        'gg-muted': 'rgb(var(--gg-muted) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
@@ -84,8 +84,8 @@ const config: Config = {
           '100%': { opacity: '1', transform: 'scale(1)' },
         },
         glowPulse: {
-          '0%, 100%': { boxShadow: '0 0 5px var(--gg-primary), 0 0 10px var(--gg-primary)' },
-          '50%': { boxShadow: '0 0 20px var(--gg-primary), 0 0 30px var(--gg-primary)' },
+          '0%, 100%': { boxShadow: '0 0 5px rgb(var(--gg-primary)), 0 0 10px rgb(var(--gg-primary))' },
+          '50%': { boxShadow: '0 0 20px rgb(var(--gg-primary)), 0 0 30px rgb(var(--gg-primary))' },
         },
         counter: {
           '0%': { '--tw-num': '0' },
