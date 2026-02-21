@@ -1,7 +1,8 @@
 'use client';
 
 import { useMotionPreferences } from '@/hooks/useMotionPreferences';
-import { fadeIn, slideUp } from '@/lib/motion';
+import { variants } from '@/lib/motion';
+const { fadeIn } = variants;
 
 export default function HomePage() {
   const { shouldAnimate } = useMotionPreferences();
