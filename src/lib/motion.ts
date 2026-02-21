@@ -1,5 +1,8 @@
 // Animation utilities for Tailwind + Framer Motion style animations
 
+// Re-export all variants from animations/presets for convenience
+export * from '../animations/presets';
+
 export const fadeIn = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
