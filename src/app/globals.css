@@ -1,0 +1,283 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Custom Properties ───────────────────────────────────────────────── */
+
+:root {
+  /* Light mode (default) */
+  --gg-bg: #f8fafc;
+  --gg-surface: #ffffff;
+  --gg-card: #f1f5f9;
+  --gg-border: #e2e8f0;
+  --gg-primary: #e94560;
+  --gg-secondary: #6366f1;
+  --gg-accent: #f5a623;
+  --gg-success: #00d26a;
+  --gg-error: #ef4444;
+  --gg-warning: #f59e0b;
+  --gg-text: #0f172a;
+  --gg-muted: #64748b;
+
+  /* Font families */
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: var(--font-mono), 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* Dark mode */
+.dark,
+:root {
+  --gg-bg: #0a0a0f;
+  --gg-surface: #13131a;
+  --gg-card: #1a1a24;
+  --gg-border: #2a2a3a;
+  --gg-primary: #e94560;
+  --gg-secondary: #818cf8;
+  --gg-accent: #f5a623;
+  --gg-success: #00d26a;
+  --gg-error: #ef4444;
+  --gg-warning: #f59e0b;
+  --gg-text: #f8fafc;
+  --gg-muted: #94a3b8;
+}
+
+/* ─── Base Styles ─────────────────────────────────────────────────────────── */
+
+@layer base {
+  * {
+    @apply border-gg-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-gg-bg text-gg-text;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Focus styles */
+  :focus-visible {
+    @apply outline-none ring-2 ring-gg-primary ring-offset-2 ring-offset-gg-bg;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-gg-primary/30 text-gg-text;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gg-surface;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gg-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gg-muted;
+  }
+}
+
+/* ─── Component Utilities ─────────────────────────────────────────────────── */
+
+@layer components {
+  /* Card component */
+  .gg-card {
+    @apply bg-gg-card border border-gg-border rounded-xl p-4 transition-all duration-200;
+  }
+
+  .gg-card:hover {
+    @apply border-gg-primary/50;
+  }
+
+  /* Button variants */
+  .gg-btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .gg-btn-primary {
+    @apply gg-btn bg-gg-primary text-white hover:brightness-110 active:scale-[0.98];
+  }
+
+  .gg-btn-secondary {
+    @apply gg-btn bg-gg-surface border border-gg-border text-gg-text hover:border-gg-primary hover:text-gg-primary;
+  }
+
+  .gg-btn-ghost {
+    @apply gg-btn bg-transparent text-gg-muted hover:bg-gg-surface hover:text-gg-text;
+  }
+
+  /* Input styles */
+  .gg-input {
+    @apply w-full px-4 py-2 bg-gg-surface border border-gg-border rounded-lg text-gg-text placeholder:text-gg-muted focus:border-gg-primary focus:ring-1 focus:ring-gg-primary transition-colors duration-200;
+  }
+
+  /* Badge styles */
+  .gg-badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .gg-badge-success {
+    @apply gg-badge bg-gg-success/20 text-gg-success;
+  }
+
+  .gg-badge-error {
+    @apply gg-badge bg-gg-error/20 text-gg-error;
+  }
+
+  .gg-badge-warning {
+    @apply gg-badge bg-gg-warning/20 text-gg-warning;
+  }
+
+  /* Glass effect */
+  .gg-glass {
+    @apply bg-gg-surface/80 backdrop-blur-lg border border-gg-border/50;
+  }
+}
+
+/* ─── Animation Keyframes ─────────────────────────────────────────────────── */
+
+@layer utilities {
+  /* Shimmer loading effect */
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s linear infinite;
+    background: linear-gradient(
+      90deg,
+      var(--gg-surface) 0%,
+      var(--gg-card) 50%,
+      var(--gg-surface) 100%
+    );
+    background-size: 200% 100%;
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-gg-primary via-gg-accent to-gg-secondary bg-clip-text text-transparent;
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px rgba(233, 69, 96, 0.3), 0 0 40px rgba(233, 69, 96, 0.1);
+  }
+
+  .glow-success {
+    box-shadow: 0 0 20px rgba(0, 210, 106, 0.3), 0 0 40px rgba(0, 210, 106, 0.1);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(245, 166, 35, 0.3), 0 0 40px rgba(245, 166, 35, 0.1);
+  }
+
+  /* Animated border gradient */
+  @keyframes border-rotate {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .animate-border {
+    background: linear-gradient(
+      90deg,
+      var(--gg-primary),
+      var(--gg-secondary),
+      var(--gg-accent),
+      var(--gg-primary)
+    );
+    background-size: 300% 100%;
+    animation: border-rotate 3s ease infinite;
+  }
+
+  /* Pulse ring */
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(233, 69, 96, 0.7);
+    }
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 10px rgba(233, 69, 96, 0);
+    }
+    100% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(233, 69, 96, 0);
+    }
+  }
+
+  .animate-pulse-ring {
+    animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+  }
+
+  /* Number counter animation */
+  @property --num {
+    syntax: '<integer>';
+    initial-value: 0;
+    inherits: false;
+  }
+
+  .counter {
+    transition: --num 1s ease-out;
+    counter-reset: num var(--num);
+  }
+
+  .counter::after {
+    content: counter(num);
+  }
+
+  /* Stagger delay utilities */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+}
+
+/* ─── Wallet Adapter Overrides ────────────────────────────────────────────── */
+
+.wallet-adapter-button {
+  @apply !bg-gg-primary !rounded-lg !font-medium !transition-all !duration-200 hover:!brightness-110;
+}
+
+.wallet-adapter-modal-wrapper {
+  @apply !bg-gg-surface/95 !backdrop-blur-xl;
+}
+
+.wallet-adapter-modal-container {
+  @apply !bg-gg-card !border !border-gg-border !rounded-2xl;
+}
+
+.wallet-adapter-modal-title {
+  @apply !text-gg-text;
+}
+
+.wallet-adapter-modal-list li {
+  @apply !bg-gg-surface !border !border-gg-border !rounded-lg hover:!border-gg-primary;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button {
+  @apply !bg-transparent !text-gg-text;
+}
