@@ -1,130 +1,56 @@
-import type {
-  Game,
-  GameCreateInput,
-  GameCreateResponse,
-  Party,
-  PartyCreateInput,
-  PartyCreateResponse,
-  LeaderboardEntry,
-  LeaderboardTimeframe,
-  LeaderboardSortBy,
-  UserProfile,
-  Transaction,
-  PaginatedResponse,
-} from '@/types'
+// API utilities for backend connection
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-async function request<T>(
-  path: string,
-  options?: RequestInit,
-): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-    ...options,
-  })
+export interface ApiResponse<T> {
+  data: T;
+  success: boolean;
+  error?: string;
+}
 
-  if (!res.ok) {
-    const error = await res.json().catch(() => ({ error: res.statusText }))
-    throw new Error(error.error || error.message || 'API request failed')
+export async function fetchApi<T>(
+  endpoint: string,
+  options?: RequestInit
+): Promise<ApiResponse<T>> {
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers,
+      },
+      ...options,
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    const data = await response.json() as T;
+    return { data, success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return { data: null as T, success: false, error: message };
   }
-
-  return res.json()
 }
 
-// ─── Games ───────────────────────────────────────────────────────────────────
-
-export const gamesApi = {
-  list: (params?: {
-    page?: number
-    limit?: number
-    sort?: string
-    filter?: string
-  }): Promise<PaginatedResponse<Game>> => {
-    const qs = new URLSearchParams(params as Record<string, string>).toString()
-    return request(`/games${qs ? `?${qs}` : ''}`)
+export const api = {
+  events: {
+    list: () => fetchApi<import('../types/betting').BettingEvent[]>('/events'),
+    get: (id: string) => fetchApi<import('../types/betting').BettingEvent>(`/events/${id}`),
   },
-
-  get: (id: string): Promise<Game> => request(`/games/${id}`),
-
-  create: (data: FormData): Promise<GameCreateResponse> =>
-    fetch(`${API_URL}/games/create`, {
-      method: 'POST',
-      body: data, // FormData — no Content-Type header (browser sets boundary)
-    }).then(async (res) => {
-      if (!res.ok) {
-        const error = await res.json().catch(() => ({ error: res.statusText }))
-        throw new Error(error.error || 'Failed to create game')
-      }
-      return res.json()
-    }),
-
-  getFeatured: (): Promise<Game[]> => request('/games/featured'),
-}
-
-// ─── Parties ─────────────────────────────────────────────────────────────────
-
-export const partiesApi = {
-  list: (params?: {
-    page?: number
-    limit?: number
-    status?: string
-    search?: string
-  }): Promise<PaginatedResponse<Party>> => {
-    const qs = new URLSearchParams(params as Record<string, string>).toString()
-    return request(`/parties${qs ? `?${qs}` : ''}`)
+  bets: {
+    list: () => fetchApi<import('../types/betting').Bet[]>('/bets'),
+    place: (data: { eventId: string; outcomeId: string; amount: number }) =>
+      fetchApi<import('../types/betting').Bet>('/bets', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    settle: (betId: string) =>
+      fetchApi<import('../types/betting').SettlementResult>(`/bets/${betId}/settle`, {
+        method: 'POST',
+      }),
   },
-
-  get: (id: string): Promise<Party> => request(`/parties/${id}`),
-
-  create: (data: PartyCreateInput): Promise<PartyCreateResponse> =>
-    request('/parties/create', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-
-  join: (
-    id: string,
-    data: { wallet_address: string; signed_transaction: string },
-  ): Promise<{ success: boolean; tx_hash: string }> =>
-    request(`/parties/${id}/join`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-
-  settleWinner: (
-    id: string,
-    data: { winner: string; game_state_hash: string; signature: string },
-  ): Promise<{ success: boolean; tx_hash: string }> =>
-    request(`/parties/${id}/settle-winner`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-}
-
-// ─── Leaderboard ─────────────────────────────────────────────────────────────
-
-export const leaderboardApi = {
-  get: (params?: {
-    timeframe?: LeaderboardTimeframe
-    sort?: LeaderboardSortBy
-    page?: number
-    limit?: number
-  }): Promise<PaginatedResponse<LeaderboardEntry>> => {
-    const qs = new URLSearchParams(params as Record<string, string>).toString()
-    return request(`/leaderboard${qs ? `?${qs}` : ''}`)
+  wallet: {
+    balance: (address: string) => fetchApi<{ balance: number }>(`/wallet/${address}/balance`),
   },
-}
-
-// ─── Profile ─────────────────────────────────────────────────────────────────
-
-export const profileApi = {
-  get: (walletAddress: string): Promise<UserProfile> =>
-    request(`/users/${walletAddress}`),
-
-  getTransactions: (walletAddress: string): Promise<Transaction[]> =>
-    request(`/users/${walletAddress}/transactions`),
-}
+};

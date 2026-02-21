@@ -1,221 +1,168 @@
-'use client';
+import { useState, useCallback, useReducer } from 'react';
+import type { BettingEvent, Outcome, BettingFlowState, Bet } from '@/types/betting';
+import { api } from '@/lib/api';
 
-import { useState, useCallback } from 'react';
-import { useBettingContext, BetSelection } from '@/context/BettingContext';
+type BettingFlowAction =
+  | { type: 'SELECT_EVENT'; event: BettingEvent }
+  | { type: 'SELECT_OUTCOME'; outcome: Outcome }
+  | { type: 'SET_AMOUNT'; amount: number }
+  | { type: 'START_CONFIRM' }
+  | { type: 'START_PROCESSING' }
+  | { type: 'SETTLE' }
+  | { type: 'ERROR'; error: string }
+  | { type: 'RESET' };
 
-interface BettingFlowState {
-  selectedOption: BetSelection | null;
-  stake: number;
-  error: string | null;
-  success: boolean;
-}
+const initialState: BettingFlowState = {
+  step: 'idle',
+  selectedEvent: null,
+  selectedOutcome: null,
+  betAmount: 0,
+  error: null,
+};
 
-interface BettingFlowConfig {
-  minStake?: number;
-  maxStake?: number;
-  maxBetsPerRace?: number;
-  onPlaceBet?: (selections: BetSelection[]) => Promise<void>;
-  onSettlement?: (result: { betId: string; result: 'won' | 'lost' | 'void' }) => void;
-}
-
-/**
- * Custom hook managing the betting flow state machine
- * Handles bet selection, stake validation, and submission
- */
-export function useBettingFlow(config: BettingFlowConfig = {}) {
-  const {
-    minStake = 1,
-    maxStake = 10000,
-    maxBetsPerRace = 5,
-    onPlaceBet,
-    onSettlement,
-  } = config;
-
-  const { selectOption, updateStake, removeSelection, clearSlip, selections, userBalance, setPlaceBetLoading } =
-    useBettingContext();
-
-  const [state, setState] = useState<BettingFlowState>({
-    selectedOption: null,
-    stake: minStake,
-    error: null,
-    success: false,
-  });
-
-  /**
-   * Select a betting option and add to slip
-   */
-  const handleSelectOption = useCallback(
-    (option: Omit<BetSelection, 'id'>) => {
-      setState((prev) => ({ ...prev, error: null }));
-
-      // Validate max bets per race
-      const raceBets = selections.filter((s) => s.event === option.event);
-      if (raceBets.length >= maxBetsPerRace) {
-        setState((prev) => ({
-          ...prev,
-          error: `Maximum ${maxBetsPerRace} bets per race allowed`,
-        }));
-        return;
-      }
-
-      selectOption({ ...option, stake: minStake });
-      setState((prev) => ({ ...prev, selectedOption: option as BetSelection, stake: minStake }));
-    },
-    [selections, maxBetsPerRace, minStake, selectOption]
-  );
-
-  /**
-   * Update stake amount with validation
-   */
-  const handleUpdateStake = useCallback(
-    (id: string, amount: number) => {
-      setState((prev) => ({ ...prev, error: null }));
-
-      // Validate stake range
-      if (amount < minStake) {
-        setState((prev) => ({
-          ...prev,
-          error: `Minimum stake is $${minStake}`,
-        }));
-        return;
-      }
-
-      if (amount > maxStake) {
-        setState((prev) => ({
-          ...prev,
-          error: `Maximum stake is $${maxStake}`,
-        }));
-        return;
-      }
-
-      // Validate total balance
-      const totalStake = selections.reduce((sum, s) => {
-        if (s.id === id) return sum + amount;
-        return sum + s.stake;
-      }, 0);
-
-      if (totalStake > userBalance) {
-        setState((prev) => ({
-          ...prev,
-          error: 'Insufficient balance',
-        }));
-        return;
-      }
-
-      updateStake(id, amount);
-      setState((prev) => ({ ...prev, stake: amount }));
-    },
-    [minStake, maxStake, userBalance, selections, updateStake]
-  );
-
-  /**
-   * Remove a selection from the slip
-   */
-  const handleRemoveSelection = useCallback(
-    (id: string) => {
-      removeSelection(id);
-      setState((prev) => ({
-        ...prev,
+function bettingFlowReducer(state: BettingFlowState, action: BettingFlowAction): BettingFlowState {
+  switch (action.type) {
+    case 'SELECT_EVENT':
+      return {
+        ...state,
+        step: 'selecting',
+        selectedEvent: action.event,
+        selectedOutcome: null,
         error: null,
-        selectedOption: null,
-      }));
-    },
-    [removeSelection]
-  );
+      };
+    case 'SELECT_OUTCOME':
+      return {
+        ...state,
+        selectedOutcome: action.outcome,
+        error: null,
+      };
+    case 'SET_AMOUNT':
+      return {
+        ...state,
+        betAmount: action.amount,
+        error: null,
+      };
+    case 'START_CONFIRM':
+      return {
+        ...state,
+        step: 'confirming',
+        error: null,
+      };
+    case 'START_PROCESSING':
+      return {
+        ...state,
+        step: 'processing',
+        error: null,
+      };
+    case 'SETTLE':
+      return {
+        ...state,
+        step: 'settled',
+        error: null,
+      };
+    case 'ERROR':
+      return {
+        ...state,
+        step: 'error',
+        error: action.error,
+      };
+    case 'RESET':
+      return initialState;
+    default:
+      return state;
+  }
+}
 
-  /**
-   * Place all bets in the slip
-   */
-  const handlePlaceBet = useCallback(async () => {
-    setState((prev) => ({ ...prev, error: null }));
+interface UseBettingFlowReturn {
+  state: BettingFlowState;
+  selectEvent: (event: BettingEvent) => void;
+  selectOutcome: (outcome: Outcome) => void;
+  setAmount: (amount: number) => void;
+  confirmBet: () => void;
+  placeBet: () => Promise<Bet | null>;
+  reset: () => void;
+  canPlaceBet: boolean;
+  potentialReturn: number;
+}
 
-    // Validate selections exist
-    if (selections.length === 0) {
-      setState((prev) => ({
-        ...prev,
-        error: 'No selections in bet slip',
-      }));
+export function useBettingFlow(): UseBettingFlowReturn {
+  const [state, dispatch] = useReducer(bettingFlowReducer, initialState);
+
+  const selectEvent = useCallback((event: BettingEvent) => {
+    dispatch({ type: 'SELECT_EVENT', event });
+  }, []);
+
+  const selectOutcome = useCallback((outcome: Outcome) => {
+    dispatch({ type: 'SELECT_OUTCOME', outcome });
+  }, []);
+
+  const setAmount = useCallback((amount: number) => {
+    dispatch({ type: 'SET_AMOUNT', amount });
+  }, []);
+
+  const confirmBet = useCallback(() => {
+    if (!state.selectedEvent || !state.selectedOutcome || state.betAmount <= 0) {
+      dispatch({ type: 'ERROR', error: 'Invalid bet configuration' });
       return;
     }
+    dispatch({ type: 'START_CONFIRM' });
+  }, [state.selectedEvent, state.selectedOutcome, state.betAmount]);
 
-    // Validate total stake
-    const totalStake = selections.reduce((sum, s) => sum + s.stake, 0);
-    if (totalStake > userBalance) {
-      setState((prev) => ({
-        ...prev,
-        error: 'Insufficient balance for this bet',
-      }));
-      return;
+  const placeBet = useCallback(async (): Promise<Bet | null> => {
+    if (!state.selectedEvent || !state.selectedOutcome || state.betAmount <= 0) {
+      dispatch({ type: 'ERROR', error: 'Invalid bet configuration' });
+      return null;
     }
 
-    setPlaceBetLoading(true);
+    dispatch({ type: 'START_PROCESSING' });
+
     try {
-      if (onPlaceBet) {
-        await onPlaceBet(selections);
+      const response = await api.bets.place({
+        eventId: state.selectedEvent.id,
+        outcomeId: state.selectedOutcome.id,
+        amount: state.betAmount,
+      });
+
+      if (!response.success || !response.data) {
+        throw new Error(response.error || 'Failed to place bet');
       }
-      clearSlip();
-      setState((prev) => ({
-        ...prev,
-        success: true,
-        selectedOption: null,
-        stake: minStake,
-      }));
 
-      // Clear success message after 3 seconds
-      setTimeout(() => {
-        setState((prev) => ({ ...prev, success: false }));
-      }, 3000);
+      dispatch({ type: 'SETTLE' });
+      return response.data;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to place bets';
-      setState((prev) => ({
-        ...prev,
-        error: message,
-      }));
-    } finally {
-      setPlaceBetLoading(false);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      dispatch({ type: 'ERROR', error: message });
+      return null;
     }
-  }, [selections, userBalance, onPlaceBet, clearSlip, minStake, setPlaceBetLoading]);
+  }, [state.selectedEvent, state.selectedOutcome, state.betAmount]);
 
-  /**
-   * Settle a bet after race completion
-   */
-  const handleSettleBet = useCallback(
-    (betId: string, result: 'won' | 'lost' | 'void') => {
-      onSettlement?.({ betId, result });
-      removeSelection(betId);
-    },
-    [onSettlement, removeSelection]
-  );
+  const reset = useCallback(() => {
+    dispatch({ type: 'RESET' });
+  }, []);
 
-  /**
-   * Clear the entire bet slip
-   */
-  const handleClearSlip = useCallback(() => {
-    clearSlip();
-    setState({
-      selectedOption: null,
-      stake: minStake,
-      error: null,
-      success: false,
-    });
-  }, [clearSlip, minStake]);
+  const canPlaceBet =
+    state.step !== 'processing' &&
+    state.step !== 'settled' &&
+    state.selectedEvent !== null &&
+    state.selectedOutcome !== null &&
+    state.betAmount > 0;
+
+  const potentialReturn =
+    state.selectedOutcome && state.betAmount > 0
+      ? state.betAmount * state.selectedOutcome.odds
+      : 0;
 
   return {
-    // State
-    selections,
-    selectedOption: state.selectedOption,
-    currentStake: state.stake,
-    error: state.error,
-    success: state.success,
-    minStake,
-    maxStake,
-
-    // Methods
-    selectOption: handleSelectOption,
-    updateStake: handleUpdateStake,
-    removeSelection: handleRemoveSelection,
-    placeBet: handlePlaceBet,
-    settleBet: handleSettleBet,
-    clearSlip: handleClearSlip,
+    state,
+    selectEvent,
+    selectOutcome,
+    setAmount,
+    confirmBet,
+    placeBet,
+    reset,
+    canPlaceBet,
+    potentialReturn,
   };
 }
+
+export default useBettingFlow;
