@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useMotionPreferences } from '@/hooks/useMotionPreferences';
-import { fadeIn } from '@/animations/presets';
+import { fadeIn } from '@/lib/motion';
 
 export default function SettingsPage() {
   const { shouldAnimate, prefersReducedMotion } = useMotionPreferences();

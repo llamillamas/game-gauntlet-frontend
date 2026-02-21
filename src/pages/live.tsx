@@ -9,7 +9,7 @@ import { BetCard } from '@/components/betting/BetCard';
 import { OddsDisplay } from '@/components/betting/OddsDisplay';
 import { BetSlip } from '@/components/betting/BetSlip';
 import { SettlementPanel } from '@/components/betting/SettlementPanel';
-import { pulseVariants, fadeVariants } from '@/animations/presets';
+import { pulseVariants, fadeVariants } from '@/lib/motion';
 
 interface LiveEvent {
   id: string;

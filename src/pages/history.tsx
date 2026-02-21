@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useMotionPreferences } from '@/hooks/useMotionPreferences';
-import { fadeIn, slideUp } from '@/animations/presets';
+import { fadeIn, slideUp } from '@/lib/motion';
 
 interface Bet {
   id: string;

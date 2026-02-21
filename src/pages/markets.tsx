@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useMotionPreferences } from '@/hooks/useMotionPreferences';
-import { fadeIn, scaleIn } from '@/animations/presets';
+import { fadeIn, scaleIn } from '@/lib/motion';
 
 interface Market {
   id: string;
