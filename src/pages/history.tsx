@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { useMotionPreferences } from '@/hooks/useMotionPreferences';
-import { variants } from '@/lib/motion';
-const { fadeIn } = variants;
+import { fadeIn } from '@/lib/motion';
 
 interface Bet {
   id: string;

@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { useMotionPreferences } from '@/hooks/useMotionPreferences';
-import { variants } from '@/lib/motion';
-const { fadeIn, scaleIn } = variants;
+import { fadeIn, scaleIn } from '@/lib/motion';
 
 interface Market {
   id: string;
